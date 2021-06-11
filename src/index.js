@@ -4,9 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import { MultiwalletProvider } from '@renproject/multiwallet-ui';
+
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <MultiwalletProvider>
+      <App />
+    </MultiwalletProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
