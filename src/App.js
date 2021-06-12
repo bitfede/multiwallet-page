@@ -60,24 +60,27 @@ function App() {
 
 
   return (
-    <>
-      <WalletDemo />
-      <button
-        onClick={() => {
-          setChain('ethereum');
-          setOpen(true);
-        }}
-      >
-        Request Ethereum
-      </button>
-      <button
-        onClick={() => {
-          setChain('bsc');
-          setOpen(true);
-        }}
-      >
-        Request BSC
-      </button>
+    <div className={"app-container"}>
+
+      <div className={"content-card"}>
+        <WalletDemo />
+        <button
+          onClick={() => {
+            setChain('ethereum');
+            setOpen(true);
+          }}
+        >
+          Request Ethereum
+        </button>
+        <button
+          onClick={() => {
+            setChain('bsc');
+            setOpen(true);
+          }}
+        >
+          Request BSC
+        </button>
+      </div>
       <WalletPickerModal
         open={open}
         options={{
@@ -87,7 +90,8 @@ function App() {
           targetNetwork: 'mainnet',
         }}
       />
-    </>
+      
+    </div>
   );
 
 
