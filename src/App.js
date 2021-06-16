@@ -4,7 +4,7 @@ import { WalletPickerModal, useMultiwallet } from '@renproject/multiwallet-ui';
 
 import MarketContractABI from "./contracts/Market-abi.json";
 
-// import logo from './logo.svg';
+import logo from './assets/img/mirai-logo-transparent.png';
 import './App.css';
 
 
@@ -112,11 +112,11 @@ function LoggedIn(props) {
   const {web3, contract} = props;
 
   return (
-    <div className={"app-container"}>
-    <WalletDemo />
-    <BuyNftUI web3={web3} contract={contract} />
-    <TransferNftUI web3={web3} contract={contract} />
-  </div>
+    <div>
+      <WalletDemo />
+      <BuyNftUI web3={web3} contract={contract} />
+      <TransferNftUI web3={web3} contract={contract} />
+    </div>
   )
 }
 
@@ -129,13 +129,14 @@ function LoggedOut() {
   const setClosed = React.useMemo(() => () => setOpen(false), [setOpen]);
 
   return (
-    <div className={"app-container"}>
+    <div>
       <div className={"content-card"}>
       <button
         onClick={() => {
           setChain('ethereum');
           setOpen(true);
         }}
+        className={"loggedout-connect-btn"}
       >
         Request Ethereum
       </button>
@@ -144,6 +145,7 @@ function LoggedOut() {
           setChain('bsc');
           setOpen(true);
         }}
+        className={"loggedout-connect-btn"}
       >
         Request BSC
       </button>
@@ -190,15 +192,32 @@ function App() {
     console.log("[*] Logged in", web3, contract)
 
     return (
-      <LoggedIn web3={web3} contract={contract} />
+      <AppShell>
+        <LoggedIn web3={web3} contract={contract} />
+      </AppShell>
     )
   }
 
   return (
-    <LoggedOut />
+    <AppShell>
+      <LoggedOut />
+    </AppShell>
   );
 
+}
 
+//APPSHELL COMPONENT
+function AppShell(props) {
+  return (
+    <div className={"app-container"}>
+      <div className={"app-header-container"}>
+        <img id={"header-logo-img"} src={logo} />
+      </div>
+      <div className={"app-content"}>
+        {props.children}
+      </div>
+    </div>
+  )
 }
 
 export default App;
