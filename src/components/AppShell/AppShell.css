@@ -1,0 +1,23 @@
+.app-container {
+    min-height: 100vh;
+}
+
+.app-header-container {
+    height: 10vw;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+  
+.app-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#header-logo-img {
+    width: 100px;
+    margin: 1rem;
+}
+  

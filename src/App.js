@@ -2,15 +2,15 @@ import * as React from 'react';
 import Web3 from "web3";
 import { WalletPickerModal, useMultiwallet } from '@renproject/multiwallet-ui';
 
-import MarketContractABI from "./contracts/Market-abi.json";
-
-import logo from './assets/img/mirai-logo-transparent.png';
-import './App.css';
-
+//components
+import AppShell from './components/AppShell/AppShell';
 
 import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-injected-connector';
 import { EthereumWalletConnectConnector } from '@renproject/multiwallet-ethereum-walletconnect-connector';
 import { BinanceSmartChainInjectedConnector } from '@renproject/multiwallet-binancesmartchain-injected-connector';
+
+import MarketContractABI from "./contracts/Market-abi.json";
+import './App.css';
 
 // Replace with your contract's address.
 const marketContractAddress = "0x34a747dE8fF81495433Fd5346b9B0F7BD756ba00";
@@ -204,20 +204,6 @@ function App() {
     </AppShell>
   );
 
-}
-
-//APPSHELL COMPONENT
-function AppShell(props) {
-  return (
-    <div className={"app-container"}>
-      <div className={"app-header-container"}>
-        <img id={"header-logo-img"} src={logo} />
-      </div>
-      <div className={"app-content"}>
-        {props.children}
-      </div>
-    </div>
-  )
 }
 
 export default App;
