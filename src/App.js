@@ -49,7 +49,7 @@ const WalletDemo: React.FC = () => {
   const { enabledChains } = useMultiwallet();
   
   return (
-    <div>
+    <div className={"wallet-ui-container"}>
       {Object.entries(enabledChains).map(([chain, connector]) => (
         <span key={chain}>
           {chain}: Status <strong>CONNECTED</strong> to {connector.account}
@@ -73,7 +73,7 @@ function TransferNftUI(props) {
             <button
               onClick={() => _handleTransferNft()}
             >
-              Buy Nft
+              Transfer Nft
             </button>
     </div>
   )

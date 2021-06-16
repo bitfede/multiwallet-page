@@ -14,4 +14,9 @@
   padding: 5rem;
   background-color: rgb(241, 240, 240);
   border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.wallet-ui-container {
+  margin-bottom: 1rem;
 }
