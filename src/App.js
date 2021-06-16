@@ -4,17 +4,16 @@ import { WalletPickerModal, useMultiwallet } from '@renproject/multiwallet-ui';
 
 import MarketContractABI from "./contracts/Market-abi.json";
 
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 
 
 import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-injected-connector';
 import { EthereumWalletConnectConnector } from '@renproject/multiwallet-ethereum-walletconnect-connector';
 import { BinanceSmartChainInjectedConnector } from '@renproject/multiwallet-binancesmartchain-injected-connector';
-import { EmojiNatureOutlined } from '@material-ui/icons';
 
 // Replace with your contract's address.
-const marketContractAddress = "0x3Aa969d343BD6AE66c4027Bb61A382DC96e88150";
+const marketContractAddress = "0x34a747dE8fF81495433Fd5346b9B0F7BD756ba00";
 
 const options = {
   chains: {
@@ -53,22 +52,121 @@ const WalletDemo: React.FC = () => {
     <div>
       {Object.entries(enabledChains).map(([chain, connector]) => (
         <span key={chain}>
-          {chain}: Status {connector.status} to {connector.account}
+          {chain}: Status <strong>CONNECTED</strong> to {connector.account}
         </span>
       ))}
     </div>
   );
 };
 
+function TransferNftUI(props) {
+
+  const {web3, contract} = props;
+
+  
+  const _handleTransferNft = () => {
+    console.log("[*] Transfer NFT")
+  }
+
+  return (
+    <div className={"content-card"}>
+            <button
+              onClick={() => _handleTransferNft()}
+            >
+              Buy Nft
+            </button>
+    </div>
+  )
+}
+
+function BuyNftUI(props) {
+
+  const {web3, contract} = props;
+
+  // functions
+  const _handleBuyNft = async () => {
+    console.log("[*] Buy an Nft")
+    const myAccount = (await web3.eth.getAccounts())[0]
+    console.log("MY ADDRESS", myAccount)
+    console.log("METHODS", contract.methods)
+
+    contract.methods.buyNft().send({from: myAccount, value: 10000000000000000}, (err, res) => {
+      console.log(">>>>>", err, res)
+    });
+  }
+
+  return (
+    <div className={"content-card"}>
+      <button
+      onClick={() => _handleBuyNft()}
+      >
+        Buy Nft
+      </button>
+    </div>
+  )
+}
+
+// TODO: put these components in separate files
+function LoggedIn(props) {
+
+  const {web3, contract} = props;
+
+  return (
+    <div className={"app-container"}>
+    <WalletDemo />
+    <BuyNftUI web3={web3} contract={contract} />
+    <TransferNftUI web3={web3} contract={contract} />
+  </div>
+  )
+}
+
+
+function LoggedOut() {
+
+  const [open, setOpen] = React.useState(false);
+  const [chain, setChain] = React.useState('');
+
+  const setClosed = React.useMemo(() => () => setOpen(false), [setOpen]);
+
+  return (
+    <div className={"app-container"}>
+      <div className={"content-card"}>
+      <button
+        onClick={() => {
+          setChain('ethereum');
+          setOpen(true);
+        }}
+      >
+        Request Ethereum
+      </button>
+      <button
+        onClick={() => {
+          setChain('bsc');
+          setOpen(true);
+        }}
+      >
+        Request BSC
+      </button>
+    </div>
+    <WalletPickerModal
+      open={open}
+      options={{
+        chain,
+        onClose: setClosed,
+        config: options,
+        targetNetwork: 'mainnet',
+      }}
+    />
+  </div>
+  )
+}
+
 function App() {
 
   const { enabledChains } = useMultiwallet();
 
-  const [open, setOpen] = React.useState(false);
-  const [chain, setChain] = React.useState('');
   const [web3, setWeb3] = React.useState(null);
   const [contract, setContract] =  React.useState(null);
-  const setClosed = React.useMemo(() => () => setOpen(false), [setOpen]);
 
   //useEffects
   React.useEffect( () => {
@@ -81,74 +179,23 @@ function App() {
     const web3instance = new Web3(web3Provider);
     const marketContract = new web3instance.eth.Contract(MarketContractABI, marketContractAddress)
 
-
     console.log("[*] Setting web3 object in state")
     setWeb3(web3instance)
     setContract(marketContract)
 
   }, [enabledChains])
 
-  // functions
-  const _handleBuyNft = () => {
-    console.log("[*] Buy an Nft")
-    console.log("MY ADDRESS", web3.eth.getAccounts())
-
-    // contract.methods.buyNft(0.01).call({from: web3.eth.getAccounts}, function(error, result){
-    //   console.log("------------")
-    //   console.log(error, result)
-    // });
-  }
-
   if (enabledChains.ethereum) {
 
-    console.log("YAAAAAMAN", web3, contract)
+    console.log("[*] Logged in", web3, contract)
 
     return (
-      <div className={"app-container"}>
-        <div className={"content-card"}>
-          <WalletDemo />
-          <button
-          onClick={() => _handleBuyNft()}
-          >
-            Buy Nft
-          </button>
-        </div>
-      </div>
+      <LoggedIn web3={web3} contract={contract} />
     )
   }
 
   return (
-    <div className={"app-container"}>
-
-      <div className={"content-card"}>
-        <button
-          onClick={() => {
-            setChain('ethereum');
-            setOpen(true);
-          }}
-        >
-          Request Ethereum
-        </button>
-        <button
-          onClick={() => {
-            setChain('bsc');
-            setOpen(true);
-          }}
-        >
-          Request BSC
-        </button>
-      </div>
-      <WalletPickerModal
-        open={open}
-        options={{
-          chain,
-          onClose: setClosed,
-          config: options,
-          targetNetwork: 'mainnet',
-        }}
-      />
-      
-    </div>
+    <LoggedOut />
   );
 
 
