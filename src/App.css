@@ -3,7 +3,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+}
+
+.content-card h3 {
+  margin: 0;  
+  margin-bottom: 1.5rem;
 }
 
 .loggedout-connect-btn {
@@ -19,6 +23,10 @@
 
 .wallet-ui-container {
   margin-bottom: 1rem;
+}
+
+#wallet-status-text {
+  color: white;
 }
 
 .main-titles-container {

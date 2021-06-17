@@ -1,9 +1,11 @@
 import * as React from 'react';
 import Web3 from "web3";
 import { WalletPickerModal, useMultiwallet } from '@renproject/multiwallet-ui';
+import { AppBar, Tabs, Tab, TextField, Button } from '@material-ui/core';
 
 //components
 import AppShell from './components/AppShell/AppShell';
+import TabPanel from './components/TabPanel/TabPanel';
 
 import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-injected-connector';
 import { EthereumWalletConnectConnector } from '@renproject/multiwallet-ethereum-walletconnect-connector';
@@ -51,7 +53,7 @@ const WalletDemo: React.FC = () => {
   return (
     <div className={"wallet-ui-container"}>
       {Object.entries(enabledChains).map(([chain, connector]) => (
-        <span key={chain}>
+        <span id={"wallet-status-text"} key={chain}>
           {chain}: Status <strong>CONNECTED</strong> to {connector.account}
         </span>
       ))}
@@ -98,25 +100,36 @@ function BuyNftUI(props) {
 
   const {web3, contract} = props;
 
+  const [amount, setAmount] = React.useState(0);
+
   // functions
   const _handleBuyNft = async () => {
     console.log("[*] Buy an Nft")
     const myAccount = (await web3.eth.getAccounts())[0]
     console.log("MY ADDRESS", myAccount)
-    console.log("METHODS", contract.methods)
+    console.log("AMOUNT", amount)
 
-    contract.methods.buyNft().send({from: myAccount, value: 10000000000000000}, (err, res) => {
+    const convertedAmount = parseInt(amount) * 1000000000000000000;
+
+    contract.methods.buyNft().send({from: myAccount, value: convertedAmount}, (err, res) => {
       console.log(">>>>>", err, res)
     });
   }
 
   return (
     <div className={"content-card"}>
-      <button
-      onClick={() => _handleBuyNft()}
-      >
-        Buy Nft
-      </button>
+      <h3>Buy an NFT</h3>
+      <TextField
+        id="buy-amount-input"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        label="Amount"
+        helperText="The quantity of ETH to send"
+        variant="outlined"
+      />
+      <Button className={"buy-nft-btn"} onClick={() => _handleBuyNft()} variant="contained" color="primary">
+        Buy NFT
+      </Button>
     </div>
   )
 }
@@ -126,11 +139,27 @@ function LoggedIn(props) {
 
   const {web3, contract} = props;
 
+  const [value, setValue] = React.useState(0);
+
+  const handleChangeValue = (e, newValue) => {
+    setValue(newValue)
+  }
+
   return (
     <div>
       <WalletDemo />
-      <BuyNftUI web3={web3} contract={contract} />
-      <TransferNftUI web3={web3} contract={contract} />
+      <AppBar position="static">
+        <Tabs centered value={value} onChange={(e, newValue) => handleChangeValue(e, newValue)} centered aria-label="simple tabs example">
+          <Tab label="Buy NFT"  />
+          <Tab label="Transfer NFT" />
+        </Tabs>
+      </AppBar>
+      <TabPanel value={value} index={0}>
+        <BuyNftUI web3={web3} contract={contract} />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <TransferNftUI web3={web3} contract={contract} />
+      </TabPanel>
     </div>
   )
 }
