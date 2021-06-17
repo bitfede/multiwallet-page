@@ -2,6 +2,7 @@ import * as React from 'react';
 import Web3 from "web3";
 import { WalletPickerModal, useMultiwallet } from '@renproject/multiwallet-ui';
 import { AppBar, Tabs, Tab, TextField, Button } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 
 //components
 import AppShell from './components/AppShell/AppShell';
@@ -53,9 +54,9 @@ const WalletDemo: React.FC = () => {
   return (
     <div className={"wallet-ui-container"}>
       {Object.entries(enabledChains).map(([chain, connector]) => (
-        <span id={"wallet-status-text"} key={chain}>
+        <Alert id={"wallet-status-text"}  severity="success" key={chain}>
           {chain}: Status <strong>CONNECTED</strong> to {connector.account}
-        </span>
+        </Alert>
       ))}
     </div>
   );
@@ -65,8 +66,8 @@ function TransferNftUI(props) {
 
   const {web3, contract} = props;
 
-  const [receiver, setReceiver] = React.useState(null);
-  const [tokenId, setTokenId] = React.useState(null);
+  const [receiver, setReceiver] = React.useState("");
+  const [tokenId, setTokenId] = React.useState("");
 
   //TODO PUT HTML INPUTS TO SET VALUES OF STATE AND BLABLA!!!!!
   
@@ -211,7 +212,7 @@ function LoggedOut() {
       </button>
     </div>
     <div className={"connect-btn-helper-text"}>
-        <p>Connnect your wallet <br/> to Save The Future</p>
+        <p>Connect your wallet <br/> to Save The Future</p>
     </div>
     <WalletPickerModal
       open={open}

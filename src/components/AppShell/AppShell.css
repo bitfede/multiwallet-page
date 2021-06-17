@@ -1,6 +1,11 @@
+#root {
+    background: url('./../../assets/img/background-ale.jpeg');
+    background-size: cover;
+
+}
+
 .app-container {
-    background-color: black;
-    min-height: 100vh;
+    min-height: 160vh;
 }
 
 .app-header-container {
@@ -11,7 +16,7 @@
 }
   
 .app-content {
-    height: 150vh;
+    height: 160vh;
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -19,7 +19,7 @@
 .loggedout-connect-btn {
   margin-bottom: .6rem;
   padding: 1rem 2rem;
-  background-color: rgb(196, 231, 253);
+  background-color: #00F4C5;
   border: 0px;
   border-radius: 10px;
   font-weight: bold;
@@ -27,13 +27,15 @@
   cursor: pointer;
 }
 
+.loggedout-connect-btn:hover {
+  background-color: #00c79f;
+  cursor: pointer;
+}
+
 .wallet-ui-container {
   margin-bottom: 1rem;
 }
 
-#wallet-status-text {
-  color: white;
-}
 
 .main-titles-container {
   display: flex;
