@@ -1,11 +1,10 @@
 #root {
-    background: url('./../../assets/img/background-ale.jpeg');
-    background-size: cover;
-
+    background-color: #130f40;
+    background-image: linear-gradient(315deg, #130f40 0%, #000000 74%);
 }
 
 .app-container {
-    min-height: 160vh;
+    min-height: 100vh;
 }
 
 .app-header-container {
@@ -16,7 +15,7 @@
 }
   
 .app-content {
-    height: 160vh;
+    height: 90vh;
     display: flex;
     flex-direction: column;
     justify-content: center;

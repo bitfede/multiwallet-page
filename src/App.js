@@ -78,7 +78,7 @@ function TransferNftUI(props) {
     console.log("METHODS", contract.methods)
 
     const sendTo = receiver;
-    const tokenIdInput = parseFloat(tokenId);
+    const tokenIdInput = parseInt(tokenId);
 
     contract.methods.safeTransferFrom(myAccount, sendTo, tokenIdInput).send({from: myAccount}, (err, res) => {
       console.log(">>SAFETRANSFER>>>", err, res)
@@ -126,7 +126,7 @@ function BuyNftUI(props) {
     console.log("MY ADDRESS", myAccount)
     console.log("AMOUNT", amount)
 
-    const convertedAmount = parseInt(amount) * 1000000000000000000;
+    const convertedAmount = parseFloat(amount) * 1000000000000000000;
 
     contract.methods.buyNft().send({from: myAccount, value: convertedAmount}, (err, res) => {
       console.log(">>>>>", err, res)

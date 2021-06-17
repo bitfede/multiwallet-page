@@ -32,6 +32,10 @@
   cursor: pointer;
 }
 
+.loggedin-container {
+  margin-bottom: 30vh;
+}
+
 .wallet-ui-container {
   margin-bottom: 1rem;
 }
@@ -76,3 +80,6 @@
   font-weight: bold;
 }
 
+
+
+/* KEYFRAMES */
