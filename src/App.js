@@ -76,22 +76,38 @@ function TransferNftUI(props) {
     console.log("MY ADDRESS", myAccount)
     console.log("METHODS", contract.methods)
 
-    const sendTo = "0x7B2E869Cf25f80764F90835Eb8eA63B7dd925138";
-    const tokenId = 1;
+    const sendTo = receiver;
+    const tokenIdInput = parseInt(tokenId);
 
-    contract.methods.safeTransferFrom(myAccount, sendTo, tokenId).send({from: myAccount, value: 10000000000000000}, (err, res) => {
+    contract.methods.safeTransferFrom(myAccount, sendTo, tokenIdInput).send({from: myAccount}, (err, res) => {
       console.log(">>SAFETRANSFER>>>", err, res)
     });
 
   }
 
   return (
-    <div className={"content-card"}>
-            <button
-              onClick={() => _handleTransferNft()}
-            >
-              Transfer Nft
-            </button>
+    <div className={"content-card-tabpanel"}>
+      <h3>Transfer an NFT</h3>
+      <TextField
+        id="transfer-recipient-input"
+        value={receiver}
+        onChange={(e) => setReceiver(e.target.value)}
+        label="Receiver"
+        helperText="The wallet address of the recipient"
+        variant="outlined"
+      />
+      <div style={{height: '1rem'}} />
+      <TextField
+        id="transfer-tokenid-input"
+        value={tokenId}
+        onChange={(e) => setTokenId(e.target.value)}
+        label="Token ID"
+        helperText="The token ID"
+        variant="outlined"
+      />
+      <Button className={"buy-nft-btn"} onClick={() => _handleTransferNft()} variant="contained" color="primary">
+        Transfer NFT
+      </Button>
     </div>
   )
 }
@@ -117,7 +133,7 @@ function BuyNftUI(props) {
   }
 
   return (
-    <div className={"content-card"}>
+    <div className={"content-card-tabpanel"}>
       <h3>Buy an NFT</h3>
       <TextField
         id="buy-amount-input"
@@ -146,7 +162,7 @@ function LoggedIn(props) {
   }
 
   return (
-    <div>
+    <div className={"loggedin-container"}>
       <WalletDemo />
       <AppBar position="static">
         <Tabs centered value={value} onChange={(e, newValue) => handleChangeValue(e, newValue)} centered aria-label="simple tabs example">
