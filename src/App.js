@@ -63,9 +63,24 @@ function TransferNftUI(props) {
 
   const {web3, contract} = props;
 
+  const [receiver, setReceiver] = React.useState(null);
+  const [tokenId, setTokenId] = React.useState(null);
+
+  //TODO PUT HTML INPUTS TO SET VALUES OF STATE AND BLABLA!!!!!
   
-  const _handleTransferNft = () => {
+  const _handleTransferNft = async () => {
     console.log("[*] Transfer NFT")
+    const myAccount = (await web3.eth.getAccounts())[0]
+    console.log("MY ADDRESS", myAccount)
+    console.log("METHODS", contract.methods)
+
+    const sendTo = "0x7B2E869Cf25f80764F90835Eb8eA63B7dd925138";
+    const tokenId = 1;
+
+    contract.methods.safeTransferFrom(myAccount, sendTo, tokenId).send({from: myAccount, value: 10000000000000000}, (err, res) => {
+      console.log(">>SAFETRANSFER>>>", err, res)
+    });
+
   }
 
   return (
@@ -138,7 +153,7 @@ function LoggedOut() {
         }}
         className={"loggedout-connect-btn"}
       >
-        Request Ethereum
+        Connect to Ethereum
       </button>
       <button
         onClick={() => {
@@ -147,8 +162,11 @@ function LoggedOut() {
         }}
         className={"loggedout-connect-btn"}
       >
-        Request BSC
+        Connect to BSC
       </button>
+    </div>
+    <div className={"connect-btn-helper-text"}>
+        <p>Connnect your wallet <br/> to Save The Future</p>
     </div>
     <WalletPickerModal
       open={open}
@@ -160,6 +178,16 @@ function LoggedOut() {
       }}
     />
   </div>
+  )
+}
+
+function Titles() {
+
+  return (
+    <div className={"main-titles-container"}>
+      <h1>$MIRAI</h1>
+      <h2>Pre-Sale Token Family {"&"} Friends</h2>
+    </div>
   )
 }
 
@@ -193,6 +221,7 @@ function App() {
 
     return (
       <AppShell>
+        <Titles />
         <LoggedIn web3={web3} contract={contract} />
       </AppShell>
     )
@@ -200,6 +229,7 @@ function App() {
 
   return (
     <AppShell>
+      <Titles />
       <LoggedOut />
     </AppShell>
   );
