@@ -78,7 +78,7 @@ function TransferNftUI(props) {
     console.log("METHODS", contract.methods)
 
     const sendTo = receiver;
-    const tokenIdInput = parseInt(tokenId);
+    const tokenIdInput = parseFloat(tokenId);
 
     contract.methods.safeTransferFrom(myAccount, sendTo, tokenIdInput).send({from: myAccount}, (err, res) => {
       console.log(">>SAFETRANSFER>>>", err, res)
