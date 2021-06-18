@@ -38,13 +38,13 @@ const options = {
         }),
       },
     ],
-    bsc: [
-      {
-        name: 'BinanceSmartWallet',
-        logo: 'https://avatars2.githubusercontent.com/u/45615063?s=60&v=4',
-        connector: new BinanceSmartChainInjectedConnector({ debug: true }),
-      },
-    ],
+    // bsc: [
+    //   {
+    //     name: 'BinanceSmartWallet',
+    //     logo: 'https://avatars2.githubusercontent.com/u/45615063?s=60&v=4',
+    //     connector: new BinanceSmartChainInjectedConnector({ debug: true }),
+    //   },
+    // ],
   },
 };
 
@@ -223,7 +223,7 @@ function BuyNftUI(props) {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         label="Amount"
-        helperText="The quantity of ETH to send"
+        helperText="The quantity of BNB to send"
         variant="outlined"
       />
       <Button className={"buy-nft-btn"} onClick={() => _handleBuyNft()} variant="contained" color="primary">
@@ -281,9 +281,9 @@ function LoggedOut() {
         }}
         className={"loggedout-connect-btn"}
       >
-        Connect to Ethereum
+        Connect
       </button>
-      <button
+      {/* <button
         onClick={() => {
           setChain('bsc');
           setOpen(true);
@@ -291,7 +291,7 @@ function LoggedOut() {
         className={"loggedout-connect-btn"}
       >
         Connect to BSC
-      </button>
+      </button> */}
     </div>
     <div className={"connect-btn-helper-text"}>
         <p>Connect your wallet <br/> to Save The Future</p>
@@ -302,7 +302,7 @@ function LoggedOut() {
         chain,
         onClose: setClosed,
         config: options,
-        targetNetwork: 'mainnet',
+        // targetNetwork: 'mainnet',
       }}
     />
   </div>
@@ -325,6 +325,7 @@ function App() {
 
   const [web3, setWeb3] = React.useState(null);
   const [contract, setContract] =  React.useState(null);
+  const isConnected = Object.entries(enabledChains).some(([chain, connector]) => connector.status === "connected")
 
   //useEffects
   React.useEffect( () => {
@@ -343,7 +344,7 @@ function App() {
 
   }, [enabledChains])
 
-  if (enabledChains.ethereum) {
+  if (isConnected) {
 
     console.log("[*] Logged in", web3, contract)
 
