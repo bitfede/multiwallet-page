@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Web3 from "web3";
 import { WalletPickerModal, useMultiwallet } from '@renproject/multiwallet-ui';
-import { AppBar, Tabs, Tab, TextField, Button } from '@material-ui/core';
+import { AppBar, Tabs, Tab, TextField, Button, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
 //components
@@ -48,7 +48,34 @@ const options = {
   },
 };
 
-const WalletDemo: React.FC = () => {
+
+
+
+function NotificationAlert(props) {
+
+  const {notificationOpen, setNotificationOpen, responseMsg} = props;
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setNotificationOpen(false);
+  };
+
+  return (
+    <Snackbar
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={notificationOpen}
+      onClose={handleClose}
+      message={responseMsg}
+      key={"Notification response"}
+    />
+  )
+}
+
+
+const WalletInfo = () => {
   const { enabledChains } = useMultiwallet();
   
   return (
@@ -68,10 +95,15 @@ function TransferNftUI(props) {
 
   const [receiver, setReceiver] = React.useState("");
   const [tokenId, setTokenId] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+  const [notificationOpen, setNotificationOpen] = React.useState(false);
+  const [responseMsg, setResponseMsg] = React.useState(null);
 
   //TODO PUT HTML INPUTS TO SET VALUES OF STATE AND BLABLA!!!!!
   
   const _handleTransferNft = async () => {
+    setLoading(true);
     console.log("[*] Transfer NFT")
     const myAccount = (await web3.eth.getAccounts())[0]
     console.log("MY ADDRESS", myAccount)
@@ -81,9 +113,58 @@ function TransferNftUI(props) {
     const tokenIdInput = parseInt(tokenId);
 
     contract.methods.safeTransferFrom(myAccount, sendTo, tokenIdInput).send({from: myAccount}, (err, res) => {
+      setLoading(false);
+      
+      if (err) {
+        console.log(err)
+        setIsError(true)
+        setResponseMsg(`[ERROR] ${err}`)
+        notificationOpen(true)
+        return
+      }
+      
+      setResponseMsg(res)
       console.log(">>SAFETRANSFER>>>", err, res)
     });
 
+  }
+
+  if (loading) {
+    return (
+      <div className={"content-card-tabpanel"}>
+        <h3>Transfer an NFT</h3>
+        <div className={"lds-roller"}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      </div>
+    )
+  }
+
+  if (responseMsg) {
+
+    let responseJsx;
+
+    if (isError) {
+      responseJsx = (
+        <div>
+          <p>An error occurred. Check metamask, if the transaction did not succeed refresh the page and try again. If the problem persists let us know</p>
+        </div>
+      )
+    } else {
+      responseJsx = (
+        <div>
+          <p>Success!</p>
+          <p>Your transaction hash is <strong>{responseMsg}</strong></p>
+          <p><a target="_blank" href={`https://ropsten.etherscan.io/tx/${responseMsg}`}>View the transaction on Etherscan</a></p>
+        </div>
+      )
+    }
+
+    return (
+      <div className={"content-card-tabpanel"}>
+        <h3>Transfer an NFT</h3>
+        {responseJsx}
+        <NotificationAlert notificationOpen={notificationOpen} setNotificationOpen={setNotificationOpen} responseMsg={responseMsg} />
+      </div>
+    )
   }
 
   return (
@@ -109,6 +190,7 @@ function TransferNftUI(props) {
       <Button className={"buy-nft-btn"} onClick={() => _handleTransferNft()} variant="contained" color="primary">
         Transfer NFT
       </Button>
+      <NotificationAlert notificationOpen={notificationOpen} setNotificationOpen={setNotificationOpen} responseMsg={responseMsg} />
     </div>
   )
 }
@@ -164,7 +246,7 @@ function LoggedIn(props) {
 
   return (
     <div className={"loggedin-container"}>
-      <WalletDemo />
+      <WalletInfo />
       <AppBar position="static">
         <Tabs centered value={value} onChange={(e, newValue) => handleChangeValue(e, newValue)} centered aria-label="simple tabs example">
           <Tab label="Buy NFT"  />
