@@ -220,7 +220,7 @@ function LoggedOut() {
         chain,
         onClose: setClosed,
         config: options,
-        targetNetwork: 'mainnet',
+        // targetNetwork: 'mainnet',
       }}
     />
   </div>
@@ -243,6 +243,7 @@ function App() {
 
   const [web3, setWeb3] = React.useState(null);
   const [contract, setContract] =  React.useState(null);
+  const isConnected = Object.entries(enabledChains).some(([chain, connector]) => connector.status === "connected")
 
   //useEffects
   React.useEffect( () => {
@@ -261,7 +262,7 @@ function App() {
 
   }, [enabledChains])
 
-  if (enabledChains.ethereum) {
+  if (isConnected) {
 
     console.log("[*] Logged in", web3, contract)
 
