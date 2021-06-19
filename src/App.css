@@ -1,3 +1,7 @@
+.text-truncate {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 
 .content-card {
   display: flex;
@@ -12,14 +16,14 @@
 }
 
 .content-card h3 {
-  margin: 0;  
+  margin: 0;
   margin-bottom: 1.5rem;
 }
 
 .loggedout-connect-btn {
-  margin-bottom: .6rem;
+  margin-bottom: 0.6rem;
   padding: 1rem 2rem;
-  background-color: #00F4C5;
+  background-color: #00f4c5;
   border: 0px;
   border-radius: 10px;
   font-weight: bold;
@@ -33,14 +37,13 @@
 }
 
 .loggedin-container {
-  margin-bottom: 30vh;
+  padding-bottom: 16px;
   width: min(720px, 90vw);
 }
 
 .wallet-ui-container {
   margin-bottom: 1rem;
 }
-
 
 .main-titles-container {
   display: flex;
@@ -60,8 +63,8 @@
 .main-titles-container h2 {
   font-size: 2.3rem;
   margin: 0;
-  margin-bottom: 7rem;
   color: white;
+  margin-bottom: 7rem;
 }
 
 @media screen and (max-width: 570px) {
@@ -70,6 +73,7 @@
   }
   .main-titles-container h2 {
     font-size: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -81,24 +85,7 @@
   font-weight: bold;
 }
 
-
-
 /* KEYFRAMES */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Loader */
 .lds-roller {

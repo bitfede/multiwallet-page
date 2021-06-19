@@ -81,7 +81,7 @@ const WalletInfo = () => {
   return (
     <div className={"wallet-ui-container"}>
       {Object.entries(enabledChains).map(([chain, connector]) => (
-        <Alert id={"wallet-status-text"}  severity="success" key={chain}>
+        <Alert id={"wallet-status-text"} className="text-truncate"  severity="success" key={chain}>
           {chain}: Status <strong>CONNECTED</strong> with wallet {connector.account}
         </Alert>
       ))}
