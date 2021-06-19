@@ -20,6 +20,7 @@
   align-items: center;
   flex-shrink: 0;
   flex-grow: 1;
+  padding-bottom: 5rem;
 }
 
 #header-logo-img {
