@@ -129,31 +129,50 @@ function TransferNftUI(props) {
 
   }
 
-  if (loading) {
-    return (
-      <div className={"content-card-tabpanel"}>
-        <h3>Transfer an NFT</h3>
-        <div className={"lds-roller"}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-      </div>
-    )
-  }
-
+  // Error / success
   if (responseMsg) {
-
     let responseJsx;
 
     if (isError) {
       responseJsx = (
-        <div>
-          <p>An error occurred. Check metamask, if the transaction did not succeed refresh the page and try again. If the problem persists let us know</p>
+        <div className={"content-card-tabpanel"}>
+         <p>An error occurred</p>
+          <p>
+            <strong>{responseMsg}</strong>
+          </p>
+          <p>
+            Check your wallet provider and try again. If the transaction did not
+            succeed try refreshing the page.
+            <br />
+            If the problem persists let us know.
+          </p>
+          <Button
+            className={"buy-nft-btn"}
+            onClick={() => setResponseMsg(null)}
+            variant="contained"
+            color="primary"
+          >
+            Retry
+          </Button>
         </div>
       )
     } else {
       responseJsx = (
-        <div>
-          <p>Success!</p>
-          <p>Your transaction hash is <strong>{responseMsg}</strong></p>
-          <p><a target="_blank" href={`https://ropsten.etherscan.io/tx/${responseMsg}`}>View the transaction on Etherscan</a></p>
+        <div className={"content-card-tabpanel"}>
+        <p>Success!</p>
+        <p>
+            Your transaction hash is <strong>{responseMsg}</strong>
+          </p>
+          <Button
+            href={`https://bscscan.com/tx/${responseMsg}`}
+            target="_blank"
+            rel="noreferrer"
+            className={"buy-nft-btn"}
+            variant="contained"
+            color="primary"
+          >
+            View the transaction
+          </Button>
         </div>
       )
     }
@@ -167,6 +186,7 @@ function TransferNftUI(props) {
     )
   }
 
+  // Loading / default
   return (
     <div className={"content-card-tabpanel"}>
       <h3>Transfer an NFT</h3>
@@ -187,9 +207,22 @@ function TransferNftUI(props) {
         helperText="The token ID"
         variant="outlined"
       />
-      <Button className={"buy-nft-btn"} onClick={() => _handleTransferNft()} variant="contained" color="primary">
+      {loading ? (
+        <div className={"lds-roller"}>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      ) : (
+      <Button className={"buy-nft-btn"} onClick={() => _handleTransferNft()} variant="contained" color="primary" disabled={!receiver || !tokenId}>
         Transfer NFT
       </Button>
+      )}
       <NotificationAlert notificationOpen={notificationOpen} setNotificationOpen={setNotificationOpen} responseMsg={responseMsg} />
     </div>
   )
@@ -233,7 +266,7 @@ function BuyNftUI(props) {
     });
   }
 
-  // Error 
+  // Error / success
   if (responseMsg) {
     let responseJsx;
 
