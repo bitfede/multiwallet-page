@@ -82,7 +82,7 @@ const WalletInfo = () => {
     <div className={"wallet-ui-container"}>
       {Object.entries(enabledChains).map(([chain, connector]) => (
         <Alert id={"wallet-status-text"}  severity="success" key={chain}>
-          {chain}: Status <strong>CONNECTED</strong> to {connector.account}
+          {chain}: Status <strong>CONNECTED</strong> with wallet {connector.account}
         </Alert>
       ))}
     </div>
@@ -200,9 +200,15 @@ function BuyNftUI(props) {
   const {web3, contract} = props;
 
   const [amount, setAmount] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
+  const [notificationOpen, setNotificationOpen] = React.useState(false);
+  const [responseMsg, setResponseMsg] = React.useState(null);
+
 
   // functions
   const _handleBuyNft = async () => {
+    setLoading(true)
     console.log("[*] Buy an Nft")
     const myAccount = (await web3.eth.getAccounts())[0]
     console.log("MY ADDRESS", myAccount)
@@ -211,8 +217,57 @@ function BuyNftUI(props) {
     const convertedAmount = parseFloat(amount) * 1000000000000000000;
 
     contract.methods.buyNft().send({from: myAccount, value: convertedAmount}, (err, res) => {
-      console.log(">>>>>", err, res)
+      setLoading(false);
+      
+      if (err) {
+        console.log(err)
+        setIsError(true)
+        setResponseMsg(`[ERROR] ${err}`)
+        setNotificationOpen(true)
+        return
+      }
+      
+      setResponseMsg(res)
+      console.log(">>>>BUYNFT>>>>>", err, res)
     });
+  }
+
+  if (loading) {
+    return (
+      <div className={"content-card-tabpanel"}>
+        <h3>Buy an NFT</h3>
+        <div className={"lds-roller"}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      </div>
+    )
+  }
+
+  if (responseMsg) {
+
+    let responseJsx;
+
+    if (isError) {
+      responseJsx = (
+        <div>
+          <p>An error occurred.<br/>Check metamask, if the transaction did not succeed refresh the page and try again.<br />If the problem persists let us know</p>
+        </div>
+      )
+    } else {
+      responseJsx = (
+        <div>
+          <p>Success!</p>
+          <p>Your transaction hash is <strong>{responseMsg}</strong></p>
+          <p><a target="_blank" href={`https://ropsten.etherscan.io/tx/${responseMsg}`}>View the transaction on Etherscan</a></p>
+        </div>
+      )
+    }
+
+    return (
+      <div className={"content-card-tabpanel"}>
+        <h3>Buy an NFT</h3>
+        {responseJsx}
+        <NotificationAlert notificationOpen={notificationOpen} setNotificationOpen={setNotificationOpen} responseMsg={responseMsg} />
+      </div>
+    )
   }
 
   return (
