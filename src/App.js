@@ -90,8 +90,9 @@ const WalletInfo = () => {
 };
 
 function TransferNftUI(props) {
-
   const {web3, contract} = props;
+  const { enabledChains } = useMultiwallet();
+  const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
 
   const [receiver, setReceiver] = React.useState("");
   const [tokenId, setTokenId] = React.useState("");
@@ -105,7 +106,6 @@ function TransferNftUI(props) {
   const _handleTransferNft = async () => {
     setLoading(true);
     console.log("[*] Transfer NFT")
-    const myAccount = (await web3.eth.getAccounts())[0]
     console.log("MY ADDRESS", myAccount)
     console.log("METHODS", contract.methods)
 
@@ -118,11 +118,12 @@ function TransferNftUI(props) {
       if (err) {
         console.log(err)
         setIsError(true)
-        setResponseMsg(`[ERROR] ${err}`)
-        notificationOpen(true)
+        setResponseMsg(`[ERROR] ${err?.message || err}`)
+        setNotificationOpen(true)
         return
       }
       
+      setIsError(false)
       setResponseMsg(res)
       console.log(">>SAFETRANSFER>>>", err, res)
     });
@@ -229,8 +230,9 @@ function TransferNftUI(props) {
 }
 
 function BuyNftUI(props) {
-
   const {web3, contract} = props;
+  const { enabledChains } = useMultiwallet();
+  const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
 
   const [amount, setAmount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
@@ -243,7 +245,6 @@ function BuyNftUI(props) {
   const _handleBuyNft = async () => {
     setLoading(true)
     console.log("[*] Buy an Nft")
-    const myAccount = (await web3.eth.getAccounts())[0]
     console.log("MY ADDRESS", myAccount)
     console.log("AMOUNT", amount)
 
@@ -412,15 +413,6 @@ function LoggedOut() {
       >
         Connect
       </button>
-      {/* <button
-        onClick={() => {
-          setChain('bsc');
-          setOpen(true);
-        }}
-        className={"loggedout-connect-btn"}
-      >
-        Connect to BSC
-      </button> */}
     </div>
     <div className={"connect-btn-helper-text"}>
         <p>Connect your wallet <br/> to Save The Future</p>
@@ -431,7 +423,6 @@ function LoggedOut() {
         chain,
         onClose: setClosed,
         config: options,
-        // targetNetwork: 'mainnet',
       }}
     />
   </div>
