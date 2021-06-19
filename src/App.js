@@ -222,43 +222,63 @@ function BuyNftUI(props) {
       if (err) {
         console.log(err)
         setIsError(true)
-        setResponseMsg(`[ERROR] ${err}`)
+        setResponseMsg(`[ERROR] ${err?.message || err}`)
         setNotificationOpen(true)
         return
       }
       
+      setIsError(false)
       setResponseMsg(res)
       console.log(">>>>BUYNFT>>>>>", err, res)
     });
   }
 
-  if (loading) {
-    return (
-      <div className={"content-card-tabpanel"}>
-        <h3>Buy an NFT</h3>
-        <div className={"lds-roller"}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-      </div>
-    )
-  }
-
+  // Error 
   if (responseMsg) {
-
     let responseJsx;
 
     if (isError) {
       responseJsx = (
-        <div>
-          <p>An error occurred.<br/>Check metamask, if the transaction did not succeed refresh the page and try again.<br />If the problem persists let us know</p>
+        <div className={"content-card-tabpanel"}>
+        <p>An error occurred</p>
+          <p>
+            <strong>{responseMsg}</strong>
+          </p>
+          <p>
+            Check your wallet provider and try again. If the transaction did not
+            succeed try refreshing the page.
+            <br />
+            If the problem persists let us know.
+          </p>
+          <Button
+            className={"buy-nft-btn"}
+            onClick={() => setResponseMsg(null)}
+            variant="contained"
+            color="primary"
+          >
+            Retry
+          </Button>
         </div>
-      )
+      );
     } else {
       responseJsx = (
-        <div>
+        <div className={"content-card-tabpanel"}>
           <p>Success!</p>
-          <p>Your transaction hash is <strong>{responseMsg}</strong></p>
-          <p><a target="_blank" href={`https://ropsten.etherscan.io/tx/${responseMsg}`}>View the transaction on Etherscan</a></p>
+          <p>
+            Your transaction hash is <strong>{responseMsg}</strong>
+          </p>
+          <Button
+            href={`https://bscscan.com/tx/${responseMsg}`}
+            target="_blank"
+            rel="noreferrer"
+            className={"buy-nft-btn"}
+            variant="contained"
+            color="primary"
+          >
+            View the transaction
+          </Button>
         </div>
-      )
+      );
     }
 
     return (
@@ -270,6 +290,7 @@ function BuyNftUI(props) {
     )
   }
 
+  // Loading / default
   return (
     <div className={"content-card-tabpanel"}>
       <h3>Buy an NFT</h3>
@@ -280,12 +301,32 @@ function BuyNftUI(props) {
         label="Amount"
         helperText="The quantity of BNB to send"
         variant="outlined"
+        disabled={loading}
       />
-      <Button className={"buy-nft-btn"} onClick={() => _handleBuyNft()} variant="contained" color="primary">
-        Buy NFT
-      </Button>
+      {loading ? (
+        <div className={"lds-roller"}>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      ) : (
+        <Button
+          className={"buy-nft-btn"}
+          onClick={() => _handleBuyNft()}
+          variant="contained"
+          color="primary"
+          disabled={!amount}
+        >
+          Buy NFT
+        </Button>
+      )}
     </div>
-  )
+  );
 }
 
 // TODO: put these components in separate files
