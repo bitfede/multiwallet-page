@@ -244,13 +244,15 @@ function BuyNftUI(props) {
   // functions
   const _handleBuyNft = async () => {
     setLoading(true)
+
+    const fromAccount = (await web3.eth.getAccounts())[0]
     console.log("[*] Buy an Nft")
-    console.log("MY ADDRESS", myAccount)
+    console.log("MY ADDRESS", fromAccount)
     console.log("AMOUNT", amount)
 
     const convertedAmount = parseFloat(amount) * 1000000000000000000;
 
-    contract.methods.buyNft().send({from: myAccount, value: convertedAmount}, (err, res) => {
+    contract.methods.buyNft().send({from: fromAccount, value: convertedAmount}, (err, res) => {
       setLoading(false);
       
       if (err) {
@@ -302,7 +304,7 @@ function BuyNftUI(props) {
             Your transaction hash is <strong>{responseMsg}</strong>
           </p>
           <Button
-            href={`https://bscscan.com/tx/${responseMsg}`}
+            href={`https://etherscan.com/tx/${responseMsg}`}
             target="_blank"
             rel="noreferrer"
             className={"buy-nft-btn"}
