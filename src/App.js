@@ -92,7 +92,7 @@ const WalletInfo = () => {
 function TransferNftUI(props) {
   const {web3, contract} = props;
   const { enabledChains } = useMultiwallet();
-  const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
+  // const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
 
   const [receiver, setReceiver] = React.useState("");
   const [tokenId, setTokenId] = React.useState("");
@@ -101,18 +101,20 @@ function TransferNftUI(props) {
   const [notificationOpen, setNotificationOpen] = React.useState(false);
   const [responseMsg, setResponseMsg] = React.useState(null);
 
-  //TODO PUT HTML INPUTS TO SET VALUES OF STATE AND BLABLA!!!!!
   
   const _handleTransferNft = async () => {
     setLoading(true);
+
+    const fromAccount = (await web3.eth.getAccounts())[0]
+
     console.log("[*] Transfer NFT")
-    console.log("MY ADDRESS", myAccount)
+    console.log("MY ADDRESS", fromAccount)
     console.log("METHODS", contract.methods)
 
     const sendTo = receiver;
     const tokenIdInput = parseInt(tokenId);
 
-    contract.methods.safeTransferFrom(myAccount, sendTo, tokenIdInput).send({from: myAccount}, (err, res) => {
+    contract.methods.safeTransferFrom(fromAccount, sendTo, tokenIdInput).send({from: fromAccount}, (err, res) => {
       setLoading(false);
       
       if (err) {
@@ -232,7 +234,7 @@ function TransferNftUI(props) {
 function BuyNftUI(props) {
   const {web3, contract} = props;
   const { enabledChains } = useMultiwallet();
-  const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
+  // const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
 
   const [amount, setAmount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
