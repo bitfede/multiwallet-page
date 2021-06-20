@@ -39,7 +39,7 @@ const options = {
         logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
         connector: new EthereumWalletConnectConnector({
           rpc: {
-            42: `https://kovan.infura.io/v3/0xf00`,
+            56: `https://bsc-dataseed.binance.org/`,
           },
           qrcode: true,
           debug: true,
