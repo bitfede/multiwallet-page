@@ -77,14 +77,23 @@ function NotificationAlert(props) {
 
 const WalletInfo = () => {
   const { enabledChains } = useMultiwallet();
-  
+  const connection = Object.entries(enabledChains).find(
+    ([chain, connector]) => connector.status === "connected"
+  );
+
   return (
     <div className={"wallet-ui-container"}>
-      {Object.entries(enabledChains).map(([chain, connector]) => (
-        <Alert id={"wallet-status-text"} className="text-truncate"  severity="success" key={chain}>
-          {chain}: Status <strong>CONNECTED</strong> with wallet {connector.account}
+      {connection && (
+        <Alert
+          id={"wallet-status-text"}
+          className="text-truncate"
+          severity="success"
+          key={connection[0]}
+        >
+          <strong>CONNECTED</strong> with wallet{" "}
+          {connection[1].account}
         </Alert>
-      ))}
+      )}
     </div>
   );
 };
@@ -92,7 +101,7 @@ const WalletInfo = () => {
 function TransferNftUI(props) {
   const {web3, contract} = props;
   const { enabledChains } = useMultiwallet();
-  // const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
+  const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.[1].account;
 
   const [receiver, setReceiver] = React.useState("");
   const [tokenId, setTokenId] = React.useState("");
@@ -105,16 +114,14 @@ function TransferNftUI(props) {
   const _handleTransferNft = async () => {
     setLoading(true);
 
-    const fromAccount = (await web3.eth.getAccounts())[0]
-
     console.log("[*] Transfer NFT")
-    console.log("MY ADDRESS", fromAccount)
+    console.log("MY ADDRESS", myAccount)
     console.log("METHODS", contract.methods)
 
     const sendTo = receiver;
     const tokenIdInput = parseInt(tokenId);
 
-    contract.methods.safeTransferFrom(fromAccount, sendTo, tokenIdInput).send({from: fromAccount}, (err, res) => {
+    contract.methods.safeTransferFrom(myAccount, sendTo, tokenIdInput).send({from: myAccount}, (err, res) => {
       setLoading(false);
       
       if (err) {
@@ -234,7 +241,7 @@ function TransferNftUI(props) {
 function BuyNftUI(props) {
   const {web3, contract} = props;
   const { enabledChains } = useMultiwallet();
-  // const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.account;
+  const myAccount = Object.entries(enabledChains).find(([chain, connector]) => connector.status === "connected")?.[1].account;
 
   const [amount, setAmount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
@@ -247,14 +254,13 @@ function BuyNftUI(props) {
   const _handleBuyNft = async () => {
     setLoading(true)
 
-    const fromAccount = (await web3.eth.getAccounts())[0]
     console.log("[*] Buy an Nft")
-    console.log("MY ADDRESS", fromAccount)
+    console.log("MY ADDRESS", myAccount)
     console.log("AMOUNT", amount)
 
     const convertedAmount = parseFloat(amount) * 1000000000000000000;
 
-    contract.methods.buyNft().send({from: fromAccount, value: convertedAmount}, (err, res) => {
+    contract.methods.buyNft().send({from: myAccount, value: convertedAmount}, (err, res) => {
       setLoading(false);
       
       if (err) {
@@ -306,7 +312,7 @@ function BuyNftUI(props) {
             Your transaction hash is <strong>{responseMsg}</strong>
           </p>
           <Button
-            href={`https://etherscan.com/tx/${responseMsg}`}
+            href={`https://bscscan.com/tx/${responseMsg}`}
             target="_blank"
             rel="noreferrer"
             className={"buy-nft-btn"}
