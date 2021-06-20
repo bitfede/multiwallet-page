@@ -28,7 +28,7 @@ const blockchainScanUrl = settings.blockchainScanUrl;
 
 const options = {
   chains: {
-    ethereum: [
+    bsc: [
       {
         name: "Metamask",
         logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4",
@@ -41,6 +41,7 @@ const options = {
           rpc: {
             56: `https://bsc-dataseed.binance.org/`,
           },
+          chainId: 56,
           qrcode: true,
           debug: true,
         }),
@@ -108,29 +109,29 @@ function TransferNftUI(props) {
   const [responseMsg, setResponseMsg] = React.useState(null);
 
   const _handleTransferNft = async () => {
-    try{
-    setLoading(true);
-    setNotificationOpen(false);
+    try {
+      setLoading(true);
+      setNotificationOpen(false);
 
-    console.log("[*] Transfer NFT");
-    console.log("MY ADDRESS", myAccount);
-    console.log("METHODS", contract.methods);
+      console.log("[*] Transfer NFT");
+      console.log("MY ADDRESS", myAccount);
+      console.log("METHODS", contract.methods);
 
-    const sendTo = receiver;
-    const tokenIdInput = parseInt(tokenId);
+      const sendTo = receiver;
+      const tokenIdInput = parseInt(tokenId);
 
-    const receipt = await contract.methods
-      .safeTransferFrom(myAccount, sendTo, tokenIdInput)
-      .send({ from: myAccount })
+      const receipt = await contract.methods
+        .safeTransferFrom(myAccount, sendTo, tokenIdInput)
+        .send({ from: myAccount });
       setIsError(false);
       setResponseMsg(receipt.transactionHash);
       console.log(">>SAFETRANSFER>>>", receipt.transactionHash);
-    }catch(err){
+    } catch (err) {
       console.log(err);
       setIsError(true);
       setResponseMsg(`[ERROR] ${err?.message || err}`);
       setNotificationOpen(true);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -389,7 +390,6 @@ function BuyNftUI(props) {
   );
 }
 
-// TODO: put these components in separate files
 function LoggedIn(props) {
   const { web3, contract } = props;
 
@@ -435,7 +435,7 @@ function LoggedOut() {
       <div className={"content-card"}>
         <button
           onClick={() => {
-            setChain("ethereum");
+            setChain("bsc");
             setOpen(true);
           }}
           className={"loggedout-connect-btn"}
@@ -471,47 +471,45 @@ function Titles() {
 
 function App() {
   const { enabledChains } = useMultiwallet();
-
   const [web3, setWeb3] = React.useState(null);
   const [contract, setContract] = React.useState(null);
-  const isConnected = Object.entries(enabledChains).some(
-    ([chain, connector]) => connector.status === "connected"
-  );
+  const isConnected =
+    !!contract &&
+    Object.entries(enabledChains).some(
+      ([chain, connector]) => connector.status === "connected"
+    );
 
-  //useEffects
   React.useEffect(() => {
-    if (!enabledChains.ethereum) {
+    handleChainChange();
+  }, [enabledChains]);
+
+  const handleChainChange = async () => {
+    const chain = enabledChains?.bsc;
+    if (!chain) {
       console.log("[*] Not connected to any chain");
       return;
     }
 
-    const web3Provider = window.ethereum;
+    const web3Provider = await chain.connector.getProvider();
     const web3instance = new Web3(web3Provider);
     const marketContract = new web3instance.eth.Contract(
       MarketContractABI,
       marketContractAddress
     );
 
-    console.log("[*] Setting web3 object in state");
     setWeb3(web3instance);
     setContract(marketContract);
-  }, [enabledChains]);
-
-  if (isConnected) {
-    console.log("[*] Logged in", web3, contract);
-
-    return (
-      <AppShell>
-        <Titles />
-        <LoggedIn web3={web3} contract={contract} />
-      </AppShell>
-    );
-  }
+    console.log("[*] Set web3 object in state");
+  };
 
   return (
     <AppShell>
       <Titles />
-      <LoggedOut />
+      {isConnected ? (
+        <LoggedIn web3={web3} contract={contract} />
+      ) : (
+        <LoggedOut />
+      )}
     </AppShell>
   );
 }
