@@ -110,6 +110,7 @@ function TransferNftUI(props) {
   const _handleTransferNft = async () => {
     try{
     setLoading(true);
+    setNotificationOpen(false);
 
     console.log("[*] Transfer NFT");
     console.log("MY ADDRESS", myAccount);
@@ -264,6 +265,7 @@ function BuyNftUI(props) {
   const _handleBuyNft = async () => {
     try {
       setLoading(true);
+      setNotificationOpen(false);
 
       console.log("[*] Buy an Nft");
       console.log("MY ADDRESS", myAccount);
