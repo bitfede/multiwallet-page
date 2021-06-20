@@ -108,6 +108,7 @@ function TransferNftUI(props) {
   const [responseMsg, setResponseMsg] = React.useState(null);
 
   const _handleTransferNft = async () => {
+    try{
     setLoading(true);
 
     console.log("[*] Transfer NFT");
@@ -117,23 +118,20 @@ function TransferNftUI(props) {
     const sendTo = receiver;
     const tokenIdInput = parseInt(tokenId);
 
-    contract.methods
+    const receipt = await contract.methods
       .safeTransferFrom(myAccount, sendTo, tokenIdInput)
-      .send({ from: myAccount }, (err, res) => {
-        setLoading(false);
-
-        if (err) {
-          console.log(err);
-          setIsError(true);
-          setResponseMsg(`[ERROR] ${err?.message || err}`);
-          setNotificationOpen(true);
-          return;
-        }
-
-        setIsError(false);
-        setResponseMsg(res);
-        console.log(">>SAFETRANSFER>>>", err, res);
-      });
+      .send({ from: myAccount })
+      setIsError(false);
+      setResponseMsg(receipt.transactionHash);
+      console.log(">>SAFETRANSFER>>>", receipt.transactionHash);
+    }catch(err){
+      console.log(err);
+      setIsError(true);
+      setResponseMsg(`[ERROR] ${err?.message || err}`);
+      setNotificationOpen(true);
+    }finally{
+      setLoading(false);
+    }
   };
 
   // Error / success
@@ -264,31 +262,29 @@ function BuyNftUI(props) {
 
   // functions
   const _handleBuyNft = async () => {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    console.log("[*] Buy an Nft");
-    console.log("MY ADDRESS", myAccount);
-    console.log("AMOUNT", amount);
+      console.log("[*] Buy an Nft");
+      console.log("MY ADDRESS", myAccount);
+      console.log("AMOUNT", amount);
 
-    const convertedAmount = parseFloat(amount) * 1000000000000000000;
+      const convertedAmount = parseFloat(amount) * 1000000000000000000;
 
-    contract.methods
-      .buyNft()
-      .send({ from: myAccount, value: convertedAmount }, (err, res) => {
-        setLoading(false);
-
-        if (err) {
-          console.log(err);
-          setIsError(true);
-          setResponseMsg(`[ERROR] ${err?.message || err}`);
-          setNotificationOpen(true);
-          return;
-        }
-
-        setIsError(false);
-        setResponseMsg(res);
-        console.log(">>>>BUYNFT>>>>>", err, res);
-      });
+      const receipt = await contract.methods
+        .buyNft()
+        .send({ from: myAccount, value: convertedAmount });
+      setIsError(false);
+      setResponseMsg(receipt.transactionHash);
+      console.log(">>>>BUYNFT>>>>>", receipt.transactionHash);
+    } catch (err) {
+      console.log(err);
+      setIsError(true);
+      setResponseMsg(`[ERROR] ${err?.message || err}`);
+      setNotificationOpen(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Error / success
