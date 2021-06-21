@@ -22,10 +22,7 @@ import settings from "./settings";
 import MarketContractABI from "./config/Market-abi.json";
 import "./App.css";
 
-// Replace with your contract's address.
-const marketContractAddress = settings.contractAddress;
-const blockchainScanUrl = settings.blockchainScanUrl;
-
+const blockchainScanUrl = settings.blockchain.explorerUrl;
 const options = {
   chains: {
     bsc: [
@@ -39,9 +36,9 @@ const options = {
         logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
         connector: new EthereumWalletConnectConnector({
           rpc: {
-            56: `https://bsc-dataseed.binance.org/`,
+            [settings.blockchain.providerChainId]:
+              settings.blockchain.providerUrl,
           },
-          chainId: 56,
           qrcode: true,
           debug: true,
         }),
@@ -490,16 +487,23 @@ function App() {
       return;
     }
 
+    const contractAddress = settings.blockchain.contractAddress;
     const web3Provider = await chain.connector.getProvider();
     const web3instance = new Web3(web3Provider);
     const marketContract = new web3instance.eth.Contract(
       MarketContractABI,
-      marketContractAddress
+      contractAddress
     );
 
     setWeb3(web3instance);
     setContract(marketContract);
-    console.log("[*] Set web3 object in state");
+    console.log(
+      "[*] Connected.",
+      contractAddress,
+      web3Provider,
+      web3instance,
+      marketContract
+    );
   };
 
   return (
