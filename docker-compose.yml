@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  client:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - 5000
+    ports: 
+      - 4001:5000
