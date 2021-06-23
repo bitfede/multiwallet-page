@@ -270,10 +270,10 @@ function BuyNftUI(props) {
       console.log("AMOUNT", amount);
 
       const convertedAmount = parseFloat(amount) * 1000000000000000000;
-
       const receipt = await contract.methods
         .buyNft()
         .send({ from: myAccount, value: convertedAmount });
+
       setIsError(false);
       setResponseMsg(receipt.transactionHash);
       console.log(">>>>BUYNFT>>>>>", receipt.transactionHash);
@@ -404,7 +404,6 @@ function LoggedIn(props) {
           centered
           value={value}
           onChange={(e, newValue) => handleChangeValue(e, newValue)}
-          centered
           aria-label="simple tabs example"
         >
           <Tab label="Buy NFT" />
