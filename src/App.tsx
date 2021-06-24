@@ -1,26 +1,16 @@
-import * as React from "react";
-import Web3 from "web3";
-import { WalletPickerModal, useMultiwallet } from "@renproject/multiwallet-ui";
-import {
-  AppBar,
-  Tabs,
-  Tab,
-  TextField,
-  Button,
-  Snackbar,
-} from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-
-//components
-import AppShell from "./components/AppShell/AppShell";
-import TabPanel from "./components/TabPanel/TabPanel";
-
+import { AppBar, Button, Tab, Tabs, TextField } from "@material-ui/core";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
-
-import settings from "./settings";
-import MarketContractABI from "./config/Market-abi.json";
+import { useMultiwallet, WalletPickerModal } from "@renproject/multiwallet-ui";
+import * as React from "react";
+import Web3 from "web3";
 import "./App.css";
+import AppShell from "./components/AppShell/AppShell";
+import TabPanel from "./components/TabPanel/TabPanel";
+import { WalletInfo } from "./components/wallet-info/wallet-info";
+import { NotificationAlert } from "./components/notification-alert/notification-alert";
+import MarketContractABI from "./config/Market-abi.json";
+import settings from "./settings";
 
 const blockchainScanUrl = settings.blockchain.explorerUrl;
 const options = {
@@ -47,50 +37,6 @@ const options = {
   },
 };
 
-function NotificationAlert(props) {
-  const { notificationOpen, setNotificationOpen, responseMsg } = props;
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setNotificationOpen(false);
-  };
-
-  return (
-    <Snackbar
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      open={notificationOpen}
-      onClose={handleClose}
-      message={responseMsg}
-      key={"Notification response"}
-    />
-  );
-}
-
-const WalletInfo = () => {
-  const { enabledChains } = useMultiwallet();
-  const connection = Object.entries(enabledChains).find(
-    ([chain, connector]) => connector.status === "connected"
-  );
-
-  return (
-    <div className={"wallet-ui-container"}>
-      {connection && (
-        <Alert
-          id={"wallet-status-text"}
-          className="text-truncate"
-          severity="success"
-          key={connection[0]}
-        >
-          <strong>CONNECTED</strong> with wallet {connection[1].account}
-        </Alert>
-      )}
-    </div>
-  );
-};
-
 function TransferNftUI(props) {
   const { web3, contract } = props;
   const { enabledChains } = useMultiwallet();
@@ -103,7 +49,7 @@ function TransferNftUI(props) {
   const [loading, setLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
   const [notificationOpen, setNotificationOpen] = React.useState(false);
-  const [responseMsg, setResponseMsg] = React.useState(null);
+  const [responseMsg, setResponseMsg] = React.useState<string>();
 
   const _handleTransferNft = async () => {
     try {
@@ -253,13 +199,20 @@ function BuyNftUI(props) {
     ([chain, connector]) => connector.status === "connected"
   )?.[1].account;
 
-  const [amount, setAmount] = React.useState(0);
+  const [amount, setAmount] = React.useState<string>("0");
   const [loading, setLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
   const [notificationOpen, setNotificationOpen] = React.useState(false);
   const [responseMsg, setResponseMsg] = React.useState(null);
 
   // functions
+  const handleChange = (evt) => {
+    let newValue = evt.target.value.replace(/,/g, ".");
+    if (!newValue || newValue.match(/^[0-9]+.?[0-9]*$/)) {
+      setAmount(newValue);
+    }
+  };
+
   const _handleBuyNft = async () => {
     try {
       setLoading(true);
@@ -355,9 +308,9 @@ function BuyNftUI(props) {
       <TextField
         id="buy-amount-input"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={handleChange}
         label="Amount"
-        helperText="The quantity of BNB to send"
+        helperText="The quantity of BNB to send (Example: 0.5)"
         variant="outlined"
         disabled={loading}
       />
@@ -450,17 +403,9 @@ function LoggedOut() {
           chain,
           onClose: setClosed,
           config: options,
+          targetNetwork: undefined,
         }}
       />
-    </div>
-  );
-}
-
-function Titles() {
-  return (
-    <div className={"main-titles-container"}>
-      <h1>$MIRAI</h1>
-      <h2>Pre-Sale Token Family {"&"} Friends</h2>
     </div>
   );
 }
@@ -487,10 +432,10 @@ function App() {
     }
 
     const contractAddress = settings.blockchain.contractAddress;
-    const web3Provider = await chain.connector.getProvider();
+    const web3Provider = (await chain.connector.getProvider()) as any;
     const web3instance = new Web3(web3Provider);
     const marketContract = new web3instance.eth.Contract(
-      MarketContractABI,
+      MarketContractABI as any,
       contractAddress
     );
 
@@ -507,7 +452,11 @@ function App() {
 
   return (
     <AppShell>
-      <Titles />
+      <div className={"main-titles-container"}>
+        <h1>$MIRAI</h1>
+        <h2>Pre-Sale Token Family & Friends</h2>
+      </div>
+
       {isConnected ? (
         <LoggedIn web3={web3} contract={contract} />
       ) : (

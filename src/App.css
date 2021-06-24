@@ -1,3 +1,7 @@
+.Mui-selected {
+  font-weight: 700 !important;
+}
+
 .text-truncate {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -43,6 +47,7 @@
 
 .wallet-ui-container {
   margin-bottom: 1rem;
+  word-break: break-word;
 }
 
 .main-titles-container {
